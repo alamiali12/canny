@@ -1,9 +1,15 @@
-import crypto from 'crypto'
+import bcrypt from 'bcrypt';
 
-const SECRET = 'ALAMI-REST-API'
+const SALT_ROUNDS = 10;
+const SECRET = 'ALAMI-REST-API';
 
-export const random = ( ) => crypto.randomBytes (128).toString('base64');
-export const authentication = (salt: string, password: string) => {
-     return crypto. createHmac('sha256', [salt, password].join('/')).update(SECRET).digest('hex');
+export const random = async () => {
+  const randomBytes = await bcrypt.genSalt(SALT_ROUNDS);
+  return randomBytes;
 };
 
+
+export const authentication = async (salt: string, password: string) => {
+     const hashedPassword = await bcrypt.hash([salt, password].join('/'), SALT_ROUNDS);
+     return bcrypt.hash(hashedPassword, SECRET);
+   };

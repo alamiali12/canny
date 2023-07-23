@@ -26,4 +26,16 @@ export const createUser = (values: Record<string, any>) => new UserModel(values)
 export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id });
 export const updateUserById = (id: string, values: Record<string, any>) => UserModel.findByIdAndUpdate(id ,values);
 
+//////////////////////////////////////////////
+export interface IUser extends mongoose.Document {
+    email: string;
+    password: string;
+  }
+  
+  const userSchema = new mongoose.Schema<IUser>({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+  });
 
+  
+  export default UserModel;

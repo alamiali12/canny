@@ -27,7 +27,7 @@ const MONGO_URL = 'mongodb://root:XoCcxmBcvr196Pm2vG4h77PS@luca.iran.liara.ir:33
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
-mongoose.connection.on('error', (error : Error) => console.log(error));
-mongoose.connection.on('open', (error : Error) => console.log(error));
+mongoose.connection.on('error', (error: Error) => console.log(error));
+mongoose.connection.on('open', (error: Error) => console.log(error));
 
 app.use('/' , router());

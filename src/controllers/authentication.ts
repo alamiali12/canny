@@ -22,15 +22,16 @@ export const login = async (req: express.Request, res: express.Response) => {
             return res.sendStatus(400); 
           }
 
-        const expectedHash = authentication (user.authentication.salt, password);
+        const expectedHash = await authentication(user.authentication.salt, password);
 
-        if(user.authentication?.password !== expectedHash ){
+        if(user.authentication.password !== expectedHash ){
             return res.sendStatus(403);
         }
 
 
-        const salt = random ();
-        user.authentication.sessionToken = authentication (salt,user._id.toString());
+        const salt = await random();
+        user.authentication.sessionToken = await authentication(salt, user._id.toString());
+
 
         await user.save();
 
@@ -66,13 +67,22 @@ export const register = async (req: express.Request, res: express.Response) => {
             username,
             authentication: {
                 salt,
-                password: authentication(salt, password),
+                password: await authentication(await salt, password),
             },
         });
 
         return res.status(200).json(user).end();
 
     } catch (error) {
+        console.log(error)
+        return res.sendStatus(400);
+    }
+}
+
+export const reset = async (req: express.Request, res: express.Response) => {
+    try {
+        
+    }catch (error) {
         console.log(error)
         return res.sendStatus(400);
     }
