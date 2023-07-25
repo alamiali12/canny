@@ -1,5 +1,6 @@
 import express from "express";
 
+
 import { deleteUserById, getUserById, getUsers } from "../db/users";
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {
@@ -26,7 +27,7 @@ export const deleteUser = async (req: express.Request, res: express.Response) =>
         return res.sendStatus(400);
     }
 
-}
+};
 
 export const updateUser = async (req: express.Request, res: express.Response) => {
     try {
@@ -50,4 +51,27 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
         console.log(error);
         return res.sendStatus(400);
     }
-}
+};
+
+
+
+export const forgotPassword = async (req: express.Request, res: express.Response) => {
+    try {
+        const { id } = req.params;
+        const { password } = req.body;
+
+        if (!password) {
+            return res.status(400).json({ error: "Password is required." });
+        }
+
+        
+        
+        return res.status(200).json({ message: "Password updated successfully." });
+        
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+};
+

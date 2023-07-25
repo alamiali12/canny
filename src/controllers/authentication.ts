@@ -4,7 +4,7 @@ import { authentication, random } from '../halpers';
 import router from 'router';
 
 export const login = async (req: express.Request, res: express.Response) => {
-    try{
+    try {
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -13,18 +13,18 @@ export const login = async (req: express.Request, res: express.Response) => {
 
         const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
 
-        if( !user) {
+        if (!user) {
             return res.sendStatus(400);
-           
+
         }
 
         if (!user.authentication || !user.authentication.salt || !user.authentication.password) {
-            return res.sendStatus(400); 
-          }
+            return res.sendStatus(400);
+        }
 
         const expectedHash = await authentication(user.authentication.salt, password);
 
-        if(user.authentication.password !== expectedHash ){
+        if (user.authentication.password === expectedHash) {
             return res.sendStatus(403);
         }
 
@@ -35,13 +35,13 @@ export const login = async (req: express.Request, res: express.Response) => {
 
         await user.save();
 
-        res.cookie('ALAMI_A' , user.authentication.sessionToken ,{ domain: 'localhost', path:'/'})
+        res.cookie('ALAMI_A', user.authentication.sessionToken, { domain: 'localhost', path: '/' })
 
         return res.status(200).json(user).end();
 
     } catch (error) {
-      console.log(error)
-      return res.sendStatus(400);
+        console.log(error)
+        return res.sendStatus(400);
     }
 }
 
@@ -52,38 +52,29 @@ export const register = async (req: express.Request, res: express.Response) => {
 
         if (!email || !password || !username) {
             return res.sendStatus(400);
-
         }
 
-        const existinUser = await getUserByEmail(email);
+        const existingUser = await getUserByEmail(email);
 
-        if (existinUser) {
+        if (existingUser) {
             return res.sendStatus(400);
         }
 
-        const salt = random();
+        const salt = await random(); // استفاده از await برای دریافت مقدار salt
+        const hashedPassword = await authentication(salt, password);
+
         const user = await createUser({
             email,
             username,
             authentication: {
                 salt,
-                password: await authentication(await salt, password),
+                password: hashedPassword,
             },
         });
 
         return res.status(200).json(user).end();
-
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.sendStatus(400);
     }
-}
-
-export const reset = async (req: express.Request, res: express.Response) => {
-    try {
-        
-    }catch (error) {
-        console.log(error)
-        return res.sendStatus(400);
-    }
-}
+};

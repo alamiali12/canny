@@ -10,6 +10,7 @@ export const random = async () => {
 
 
 export const authentication = async (salt: string, password: string) => {
-     const hashedPassword = await bcrypt.hash([salt, password].join('/'), SALT_ROUNDS);
-     return bcrypt.hash(hashedPassword, SECRET);
-   };
+  const hashedPassword = await bcrypt.hash(password, salt);
+  return bcrypt.hash([hashedPassword, SECRET].join('/'), SALT_ROUNDS);
+};
+
