@@ -6,6 +6,7 @@ import compression from 'compression';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import router from './router';
+import feedbackRoutes from "./router/feedbackRoutes";
 
 
  
@@ -18,6 +19,7 @@ app.use(cors({
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use("/api", feedbackRoutes);
 
 const server = http.createServer(app);
 
